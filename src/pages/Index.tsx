@@ -13,6 +13,7 @@ import { BirthCertificateForm } from '@/components/BirthCertificateForm';
 import { DeathCertificateForm } from '@/components/DeathCertificateForm';
 import { MarriageCertificateForm } from '@/components/MarriageCertificateForm';
 import { NameChangeCertificateForm } from '@/components/NameChangeCertificateForm';
+import { DocumentPreview } from '@/components/DocumentPreview';
 
 type DocumentType = 'birth' | 'death' | 'marriage' | 'name_change';
 type DocumentStatus = 'draft' | 'processing' | 'ready' | 'issued' | 'archived';
@@ -24,6 +25,7 @@ interface Document {
   date: string;
   fullName: string;
   status: DocumentStatus;
+  data?: any;
 }
 
 const documentTypes = {
@@ -50,10 +52,94 @@ const statusLabels: Record<DocumentStatus, string> = {
 };
 
 const mockDocuments: Document[] = [
-  { id: '1', type: 'birth', number: 'I-МЮ №234567', date: '25.05.2023', fullName: 'Иванов Иван Иванович', status: 'processing' },
-  { id: '2', type: 'marriage', number: 'II-МЮ №123456', date: '15.04.2023', fullName: 'Петрова Анна Сергеевна', status: 'ready' },
-  { id: '3', type: 'death', number: 'III-МЮ №345678', date: '10.03.2023', fullName: 'Сидоров Петр Николаевич', status: 'issued' },
-  { id: '4', type: 'name_change', number: 'IV-МЮ №456789', date: '28.02.2023', fullName: 'Козлова Мария Александровна', status: 'draft' },
+  { 
+    id: '1', 
+    type: 'birth', 
+    number: 'I-МЮ №234567', 
+    date: '25.05.2023', 
+    fullName: 'Иванов Иван Иванович', 
+    status: 'processing',
+    data: {
+      childLastName: 'Иванов',
+      childFirstName: 'Иван',
+      childMiddleName: 'Иванович',
+      birthDate: '2023-05-15',
+      birthPlace: 'г. Москва, ГКБ №1',
+      motherLastName: 'Иванова',
+      motherFirstName: 'Мария',
+      motherMiddleName: 'Петровна',
+      motherBirthDate: '1990-03-20',
+      fatherLastName: 'Иванов',
+      fatherFirstName: 'Сергей',
+      fatherMiddleName: 'Александрович',
+      fatherBirthDate: '1988-07-10',
+      registrationDate: '2023-05-25',
+      registrationPlace: 'Отдел ЗАГС Центрального района г. Москвы'
+    }
+  },
+  { 
+    id: '2', 
+    type: 'marriage', 
+    number: 'II-МЮ №123456', 
+    date: '15.04.2023', 
+    fullName: 'Петрова Анна Сергеевна', 
+    status: 'ready',
+    data: {
+      groomLastName: 'Петров',
+      groomFirstName: 'Дмитрий',
+      groomMiddleName: 'Викторович',
+      groomBirthDate: '1992-08-15',
+      brideLastName: 'Смирнова',
+      brideFirstName: 'Анна',
+      brideMiddleName: 'Сергеевна',
+      brideBirthDate: '1995-11-23',
+      marriageDate: '2023-04-15',
+      marriagePlace: 'Дворец бракосочетания №1 г. Москвы',
+      brideNewLastName: 'Петрова',
+      registrationDate: '2023-04-15',
+      registrationPlace: 'Отдел ЗАГС Западного района г. Москвы'
+    }
+  },
+  { 
+    id: '3', 
+    type: 'death', 
+    number: 'III-МЮ №345678', 
+    date: '10.03.2023', 
+    fullName: 'Сидоров Петр Николаевич', 
+    status: 'issued',
+    data: {
+      deceasedLastName: 'Сидоров',
+      deceasedFirstName: 'Петр',
+      deceasedMiddleName: 'Николаевич',
+      birthDate: '1945-06-12',
+      deathDate: '2023-03-08',
+      deathPlace: 'г. Москва, ул. Ленина, д. 45, кв. 12',
+      deathCause: 'Естественная смерть',
+      registrationDate: '2023-03-10',
+      registrationPlace: 'Отдел ЗАГС Восточного района г. Москвы'
+    }
+  },
+  { 
+    id: '4', 
+    type: 'name_change', 
+    number: 'IV-МЮ №456789', 
+    date: '28.02.2023', 
+    fullName: 'Козлова Мария Александровна', 
+    status: 'draft',
+    data: {
+      oldLastName: 'Козлова',
+      oldFirstName: 'Мария',
+      oldMiddleName: 'Александровна',
+      newLastName: 'Новикова',
+      newFirstName: 'Мария',
+      newMiddleName: 'Александровна',
+      birthDate: '1988-09-25',
+      birthPlace: 'г. Санкт-Петербург',
+      changeReason: 'Заключение брака',
+      registrationDate: '2023-02-28',
+      registrationPlace: 'Отдел ЗАГС Северного района г. Москвы'
+    }
+  },
 ];
 
 const Index = () => {
@@ -547,6 +633,19 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {selectedDocument && selectedDocument.data && (
+        <DocumentPreview
+          type={selectedDocument.type}
+          number={selectedDocument.number}
+          data={selectedDocument.data}
+          onPrint={() => {
+            window.print();
+            setViewDocumentOpen(false);
+          }}
+          onClose={() => setViewDocumentOpen(false)}
+        />
+      )}
     </div>
   );
 };
