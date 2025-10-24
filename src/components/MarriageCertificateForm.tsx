@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
+import { DocumentPreview } from './DocumentPreview';
 
 interface MarriageData {
   groomLastNameBefore: string;
@@ -25,6 +26,7 @@ interface MarriageData {
 }
 
 export const MarriageCertificateForm = ({ onSave }: { onSave: () => void }) => {
+  const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState<MarriageData>({
     groomLastNameBefore: '',
     groomFirstName: '',
@@ -57,9 +59,18 @@ export const MarriageCertificateForm = ({ onSave }: { onSave: () => void }) => {
     toast.success('Свидетельство о браке сохранено');
   };
 
+  const handlePreview = () => {
+    if (!formData.groomFirstName || !formData.brideFirstName || !formData.marriageDate) {
+      toast.error('Заполните обязательные поля для предпросмотра');
+      return;
+    }
+    setShowPreview(true);
+  };
+
   const handlePrint = () => {
     window.print();
     toast.info('Документ отправлен на печать');
+    setShowPreview(false);
   };
 
   return (
@@ -216,6 +227,10 @@ export const MarriageCertificateForm = ({ onSave }: { onSave: () => void }) => {
           <Icon name="Save" size={16} />
           Сохранить
         </Button>
+        <Button onClick={handlePreview} variant="outline" className="gap-2">
+          <Icon name="Eye" size={16} />
+          Предпросмотр
+        </Button>
         <Button onClick={handlePrint} variant="outline" className="gap-2">
           <Icon name="Printer" size={16} />
           Печать на бланк
@@ -225,6 +240,16 @@ export const MarriageCertificateForm = ({ onSave }: { onSave: () => void }) => {
           Отправить на проверку
         </Button>
       </div>
+
+      {showPreview && (
+        <DocumentPreview
+          type="marriage"
+          number={`II-МЮ №${Math.floor(Math.random() * 900000) + 100000}`}
+          data={formData}
+          onPrint={handlePrint}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
     </div>
   );
 };

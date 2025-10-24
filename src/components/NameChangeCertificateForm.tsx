@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
+import { DocumentPreview } from './DocumentPreview';
 
 interface NameChangeData {
   lastNameBefore: string;
@@ -24,6 +25,7 @@ interface NameChangeData {
 }
 
 export const NameChangeCertificateForm = ({ onSave }: { onSave: () => void }) => {
+  const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState<NameChangeData>({
     lastNameBefore: '',
     firstNameBefore: '',
@@ -45,6 +47,14 @@ export const NameChangeCertificateForm = ({ onSave }: { onSave: () => void }) =>
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handlePreview = () => {
+    if (!formData.lastNameBefore || !formData.firstNameBefore || !formData.lastNameAfter || !formData.firstNameAfter) {
+      toast.error('Заполните обязательные поля для предпросмотра');
+      return;
+    }
+    setShowPreview(true);
+  };
+
   const handleSave = () => {
     if (!formData.lastNameBefore || !formData.firstNameBefore || !formData.lastNameAfter || !formData.firstNameAfter) {
       toast.error('Заполните обязательные поля');
@@ -57,6 +67,7 @@ export const NameChangeCertificateForm = ({ onSave }: { onSave: () => void }) =>
   const handlePrint = () => {
     window.print();
     toast.info('Документ отправлен на печать');
+    setShowPreview(false);
   };
 
   return (
@@ -197,6 +208,10 @@ export const NameChangeCertificateForm = ({ onSave }: { onSave: () => void }) =>
           <Icon name="Save" size={16} />
           Сохранить
         </Button>
+        <Button onClick={handlePreview} variant="outline" className="gap-2">
+          <Icon name="Eye" size={16} />
+          Предпросмотр
+        </Button>
         <Button onClick={handlePrint} variant="outline" className="gap-2">
           <Icon name="Printer" size={16} />
           Печать на бланк
@@ -206,6 +221,16 @@ export const NameChangeCertificateForm = ({ onSave }: { onSave: () => void }) =>
           Отправить на проверку
         </Button>
       </div>
+
+      {showPreview && (
+        <DocumentPreview
+          type="name_change"
+          number={`IV-МЮ №${Math.floor(Math.random() * 900000) + 100000}`}
+          data={formData}
+          onPrint={handlePrint}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
     </div>
   );
 };

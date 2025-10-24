@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
+import { DocumentPreview } from './DocumentPreview';
 
 interface DeathData {
   lastName: string;
@@ -23,6 +24,7 @@ interface DeathData {
 }
 
 export const DeathCertificateForm = ({ onSave }: { onSave: () => void }) => {
+  const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState<DeathData>({
     lastName: '',
     firstName: '',
@@ -52,9 +54,18 @@ export const DeathCertificateForm = ({ onSave }: { onSave: () => void }) => {
     toast.success('Свидетельство о смерти сохранено');
   };
 
+  const handlePreview = () => {
+    if (!formData.lastName || !formData.firstName || !formData.deathDate) {
+      toast.error('Заполните обязательные поля для предпросмотра');
+      return;
+    }
+    setShowPreview(true);
+  };
+
   const handlePrint = () => {
     window.print();
     toast.info('Документ отправлен на печать');
+    setShowPreview(false);
   };
 
   return (
@@ -189,6 +200,10 @@ export const DeathCertificateForm = ({ onSave }: { onSave: () => void }) => {
           <Icon name="Save" size={16} />
           Сохранить
         </Button>
+        <Button onClick={handlePreview} variant="outline" className="gap-2">
+          <Icon name="Eye" size={16} />
+          Предпросмотр
+        </Button>
         <Button onClick={handlePrint} variant="outline" className="gap-2">
           <Icon name="Printer" size={16} />
           Печать на бланк
@@ -198,6 +213,16 @@ export const DeathCertificateForm = ({ onSave }: { onSave: () => void }) => {
           Отправить на проверку
         </Button>
       </div>
+
+      {showPreview && (
+        <DocumentPreview
+          type="death"
+          number={`III-МЮ №${Math.floor(Math.random() * 900000) + 100000}`}
+          data={formData}
+          onPrint={handlePrint}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
     </div>
   );
 };

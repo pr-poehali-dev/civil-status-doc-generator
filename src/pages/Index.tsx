@@ -64,6 +64,8 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('registry');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newDocType, setNewDocType] = useState<DocumentType>('birth');
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [viewDocumentOpen, setViewDocumentOpen] = useState(false);
 
   const filteredDocuments = documents.filter((doc) => {
     const matchesSearch = doc.fullName.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -95,7 +97,29 @@ const Index = () => {
   };
 
   const handleExportDocument = (doc: Document) => {
-    toast.info('Экспорт документа', { description: `${doc.number} подготовлен к печати` });
+    window.print();
+    toast.info('Экспорт документа', { description: `${doc.number} отправлен на печать` });
+  };
+
+  const handleViewDocument = (doc: Document) => {
+    setSelectedDocument(doc);
+    setViewDocumentOpen(true);
+  };
+
+  const handleEditDocument = (doc: Document) => {
+    setNewDocType(doc.type);
+    setActiveTab('create');
+    toast.info('Редактирование документа', { description: `${doc.number}` });
+  };
+
+  const handleDeleteDocument = (docId: string) => {
+    setDocuments(documents.filter(d => d.id !== docId));
+    toast.success('Документ удалён');
+  };
+
+  const handleChangeStatus = (docId: string, newStatus: DocumentStatus) => {
+    setDocuments(documents.map(d => d.id === docId ? { ...d, status: newStatus } : d));
+    toast.success('Статус изменён', { description: statusLabels[newStatus] });
   };
 
   return (
@@ -283,16 +307,28 @@ const Index = () => {
                             </Badge>
                           </td>
                           <td className="px-4 py-3">
-                            <div className="flex gap-2">
-                              <Button variant="ghost" size="sm">
+                            <div className="flex gap-1">
+                              <Button variant="ghost" size="sm" onClick={() => handleViewDocument(doc)}>
                                 <Icon name="Eye" size={16} />
                               </Button>
-                              <Button variant="ghost" size="sm">
+                              <Button variant="ghost" size="sm" onClick={() => handleEditDocument(doc)}>
                                 <Icon name="Edit" size={16} />
                               </Button>
                               <Button variant="ghost" size="sm" onClick={() => handleExportDocument(doc)}>
                                 <Icon name="Printer" size={16} />
                               </Button>
+                              <Select onValueChange={(v) => handleChangeStatus(doc.id, v as DocumentStatus)}>
+                                <SelectTrigger className="h-8 w-8 p-0 border-0">
+                                  <Icon name="MoreVertical" size={16} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="draft">Черновик</SelectItem>
+                                  <SelectItem value="processing">В обработке</SelectItem>
+                                  <SelectItem value="ready">Готов</SelectItem>
+                                  <SelectItem value="issued">Выдан</SelectItem>
+                                  <SelectItem value="archived">Архив</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
                           </td>
                         </tr>
@@ -340,25 +376,77 @@ const Index = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>ФИО</Label>
-                    <Input placeholder="Поиск по фамилии, имени или отчеству" />
+                    <Input 
+                      placeholder="Поиск по фамилии, имени или отчеству"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label>Номер документа</Label>
-                    <Input placeholder="Введите номер" />
+                    <Label>Тип документа</Label>
+                    <Select value={filterType} onValueChange={(v) => setFilterType(v as DocumentType | 'all')}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Все типы" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Все типы</SelectItem>
+                        <SelectItem value="birth">Рождение</SelectItem>
+                        <SelectItem value="death">Смерть</SelectItem>
+                        <SelectItem value="marriage">Брак</SelectItem>
+                        <SelectItem value="name_change">Смена имени</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Дата от</Label>
-                    <Input type="date" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Дата до</Label>
-                    <Input type="date" />
+                    <Label>Статус</Label>
+                    <Select value={filterStatus} onValueChange={(v) => setFilterStatus(v as DocumentStatus | 'all')}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Все статусы" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Все статусы</SelectItem>
+                        <SelectItem value="draft">Черновик</SelectItem>
+                        <SelectItem value="processing">В обработке</SelectItem>
+                        <SelectItem value="ready">Готов</SelectItem>
+                        <SelectItem value="issued">Выдан</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
-                <Button className="gap-2">
-                  <Icon name="Search" size={16} />
-                  Найти документы
-                </Button>
+                
+                {filteredDocuments.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-sm font-semibold mb-3">Результаты поиска: {filteredDocuments.length}</h3>
+                    <div className="border rounded-md">
+                      <table className="w-full">
+                        <thead className="bg-muted/50">
+                          <tr className="border-b">
+                            <th className="px-4 py-3 text-left text-sm font-medium">Номер</th>
+                            <th className="px-4 py-3 text-left text-sm font-medium">Тип</th>
+                            <th className="px-4 py-3 text-left text-sm font-medium">ФИО</th>
+                            <th className="px-4 py-3 text-left text-sm font-medium">Дата</th>
+                            <th className="px-4 py-3 text-left text-sm font-medium">Статус</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredDocuments.map((doc) => (
+                            <tr key={doc.id} className="border-b hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => handleViewDocument(doc)}>
+                              <td className="px-4 py-3 text-sm font-mono">{doc.number}</td>
+                              <td className="px-4 py-3 text-sm">{documentTypes[doc.type]}</td>
+                              <td className="px-4 py-3 text-sm font-medium">{doc.fullName}</td>
+                              <td className="px-4 py-3 text-sm text-muted-foreground">{doc.date}</td>
+                              <td className="px-4 py-3">
+                                <Badge className={statusColors[doc.status]} variant="secondary">
+                                  {statusLabels[doc.status]}
+                                </Badge>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
