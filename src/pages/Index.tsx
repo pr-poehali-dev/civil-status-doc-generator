@@ -634,7 +634,7 @@ const Index = () => {
         </Tabs>
       </div>
 
-      {selectedDocument && selectedDocument.data && (
+      {viewDocumentOpen && selectedDocument && selectedDocument.data && (
         <DocumentPreview
           type={selectedDocument.type}
           number={selectedDocument.number}
