@@ -9,6 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
+import { BirthCertificateForm } from '@/components/BirthCertificateForm';
+import { DeathCertificateForm } from '@/components/DeathCertificateForm';
+import { MarriageCertificateForm } from '@/components/MarriageCertificateForm';
+import { NameChangeCertificateForm } from '@/components/NameChangeCertificateForm';
 
 type DocumentType = 'birth' | 'death' | 'marriage' | 'name_change';
 type DocumentStatus = 'draft' | 'processing' | 'ready' | 'issued' | 'archived';
@@ -303,57 +307,26 @@ const Index = () => {
           <TabsContent value="create" className="fade-in">
             <Card>
               <CardHeader>
-                <CardTitle>Создание нового документа</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Создание нового документа</CardTitle>
+                  <Select value={newDocType} onValueChange={(v) => setNewDocType(v as DocumentType)}>
+                    <SelectTrigger className="w-64">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="birth">Свидетельство о рождении</SelectItem>
+                      <SelectItem value="death">Свидетельство о смерти</SelectItem>
+                      <SelectItem value="marriage">Свидетельство о браке</SelectItem>
+                      <SelectItem value="name_change">Свидетельство о смене имени</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label>Тип документа</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Выберите тип" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="birth">Свидетельство о рождении</SelectItem>
-                        <SelectItem value="death">Свидетельство о смерти</SelectItem>
-                        <SelectItem value="marriage">Свидетельство о браке</SelectItem>
-                        <SelectItem value="name_change">Свидетельство о смене имени</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Дата регистрации</Label>
-                    <Input type="date" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Фамилия Имя Отчество</Label>
-                  <Input placeholder="Введите полное ФИО" />
-                </div>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label>Дата рождения</Label>
-                    <Input type="date" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Место рождения</Label>
-                    <Input placeholder="Город, регион" />
-                  </div>
-                </div>
-                <div className="flex gap-3 pt-4">
-                  <Button className="gap-2">
-                    <Icon name="Save" size={16} />
-                    Сохранить черновик
-                  </Button>
-                  <Button variant="outline" className="gap-2">
-                    <Icon name="FileCheck" size={16} />
-                    Отправить на проверку
-                  </Button>
-                  <Button variant="outline" className="gap-2">
-                    <Icon name="X" size={16} />
-                    Отменить
-                  </Button>
-                </div>
+              <CardContent>
+                {newDocType === 'birth' && <BirthCertificateForm onSave={() => setActiveTab('registry')} />}
+                {newDocType === 'death' && <DeathCertificateForm onSave={() => setActiveTab('registry')} />}
+                {newDocType === 'marriage' && <MarriageCertificateForm onSave={() => setActiveTab('registry')} />}
+                {newDocType === 'name_change' && <NameChangeCertificateForm onSave={() => setActiveTab('registry')} />}
               </CardContent>
             </Card>
           </TabsContent>
