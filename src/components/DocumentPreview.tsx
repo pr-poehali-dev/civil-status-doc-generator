@@ -1,4 +1,3 @@
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 
@@ -11,211 +10,379 @@ interface DocumentPreviewProps {
 }
 
 export const DocumentPreview = ({ type, number, data, onPrint, onClose }: DocumentPreviewProps) => {
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
   const renderBirthCertificate = () => (
-    <div className="space-y-6">
-      <div className="text-center border-b-2 border-primary pb-4">
-        <div className="text-xs text-muted-foreground">РОССИЙСКАЯ ФЕДЕРАЦИЯ</div>
-        <h2 className="text-2xl font-bold mt-2">СВИДЕТЕЛЬСТВО О РОЖДЕНИИ</h2>
-        <div className="text-sm text-muted-foreground mt-1">Номер записи акта: {number}</div>
+    <div className="official-document">
+      <div className="text-center mb-8">
+        <div className="text-xs tracking-widest mb-2 official-label">РОССИЙСКАЯ ФЕДЕРАЦИЯ</div>
+        <h1 className="text-4xl font-serif tracking-wide mb-1 official-title">СВИДЕТЕЛЬСТВО</h1>
+        <h2 className="text-3xl font-serif tracking-wide official-title">О РОЖДЕНИИ</h2>
       </div>
-      
-      <div className="space-y-4 text-sm">
-        <div>
-          <div className="font-semibold mb-1">Фамилия, имя, отчество:</div>
-          <div className="pl-4">{data.childLastName} {data.childFirstName} {data.childMiddleName}</div>
+
+      <div className="space-y-4 official-content">
+        <div className="flex items-baseline gap-2">
+          <span className="text-sm w-32 flex-shrink-0"></span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{data.childLastName}</span>
+          </div>
         </div>
+        <div className="text-center text-xs italic -mt-2">фамилия</div>
         
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <div className="font-semibold mb-1">Дата рождения:</div>
-            <div className="pl-4">{data.birthDate}</div>
-          </div>
-          <div>
-            <div className="font-semibold mb-1">Место рождения:</div>
-            <div className="pl-4">{data.birthPlace}</div>
+        <div className="flex items-baseline gap-2">
+          <span className="text-sm w-32 flex-shrink-0"></span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{data.childFirstName} {data.childMiddleName}</span>
           </div>
         </div>
+        <div className="text-center text-xs italic -mt-2">имя, отчество</div>
 
-        <div>
-          <div className="font-semibold mb-1">Мать:</div>
-          <div className="pl-4">{data.motherLastName} {data.motherFirstName} {data.motherMiddleName}</div>
-          {data.motherBirthDate && <div className="pl-4 text-xs text-muted-foreground">Дата рождения: {data.motherBirthDate}</div>}
+        <div className="flex items-baseline gap-2 mt-6">
+          <span className="text-sm w-32 flex-shrink-0">родился(лась)</span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{formatDate(data.birthDate)}</span>
+          </div>
+        </div>
+        <div className="text-center text-xs italic -mt-2">число, месяц, год (прописью и цифрами)</div>
+
+        <div className="flex items-baseline gap-2 mt-4">
+          <span className="text-sm w-32 flex-shrink-0">место рождения</span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{data.birthPlace}</span>
+          </div>
         </div>
 
-        <div>
-          <div className="font-semibold mb-1">Отец:</div>
-          <div className="pl-4">{data.fatherLastName} {data.fatherFirstName} {data.fatherMiddleName}</div>
-          {data.fatherBirthDate && <div className="pl-4 text-xs text-muted-foreground">Дата рождения: {data.fatherBirthDate}</div>}
-        </div>
-
-        <div className="border-t pt-4 mt-6">
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div>
-              <div className="font-semibold">Дата составления:</div>
-              <div>{data.registrationDate}</div>
-            </div>
-            <div>
-              <div className="font-semibold">Место государственной регистрации:</div>
-              <div>{data.registrationPlace}</div>
+        <div className="mt-8">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm w-20 flex-shrink-0">Отец</span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="official-data">{data.fatherLastName}</span>
             </div>
           </div>
+          <div className="text-center text-xs italic -mt-2 mb-3">фамилия</div>
+
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm w-20 flex-shrink-0"></span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="official-data">{data.fatherFirstName} {data.fatherMiddleName}</span>
+            </div>
+          </div>
+          <div className="text-center text-xs italic -mt-2 mb-3">имя, отчество</div>
+        </div>
+
+        <div className="mt-6">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm w-20 flex-shrink-0">Мать</span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="official-data">{data.motherLastName}</span>
+            </div>
+          </div>
+          <div className="text-center text-xs italic -mt-2 mb-3">фамилия</div>
+
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm w-20 flex-shrink-0"></span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="official-data">{data.motherFirstName} {data.motherMiddleName}</span>
+            </div>
+          </div>
+          <div className="text-center text-xs italic -mt-2">имя, отчество</div>
+        </div>
+
+        <div className="mt-8">
+          <div className="flex items-baseline gap-4">
+            <span className="text-sm">Место государственной регистрации</span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="text-sm italic">{data.registrationPlace}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 flex justify-between items-end">
+          <div className="text-center">
+            <div className="w-32 h-32 border-4 border-blue-600 rounded-full flex items-center justify-center mb-2">
+              <span className="text-xs">М.П.</span>
+            </div>
+          </div>
+          <div className="flex-1 ml-8">
+            <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-sm">Дата выдачи «</span>
+              <div className="border-b border-dotted border-gray-600 pb-1 px-4">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).getDate()}</span>
+              </div>
+              <span className="text-sm">»</span>
+              <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).toLocaleDateString('ru-RU', { month: 'long' })}</span>
+              </div>
+              <div className="border-b border-dotted border-gray-600 pb-1 px-8">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).getFullYear()}</span>
+              </div>
+              <span className="text-sm">г.</span>
+            </div>
+            <div className="border-b border-dotted border-gray-600 pb-1 w-full mb-1"></div>
+            <div className="text-right text-xs italic">подпись</div>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center">
+          <div className="text-red-700 font-bold tracking-widest">{number}</div>
         </div>
       </div>
     </div>
   );
 
   const renderDeathCertificate = () => (
-    <div className="space-y-6">
-      <div className="text-center border-b-2 border-primary pb-4">
-        <div className="text-xs text-muted-foreground">РОССИЙСКАЯ ФЕДЕРАЦИЯ</div>
-        <h2 className="text-2xl font-bold mt-2">СВИДЕТЕЛЬСТВО О СМЕРТИ</h2>
-        <div className="text-sm text-muted-foreground mt-1">Номер записи акта: {number}</div>
+    <div className="official-document">
+      <div className="text-center mb-8">
+        <div className="text-xs tracking-widest mb-2 official-label">РОССИЙСКАЯ ФЕДЕРАЦИЯ</div>
+        <h1 className="text-4xl font-serif tracking-wide mb-1 official-title">СВИДЕТЕЛЬСТВО</h1>
+        <h2 className="text-3xl font-serif tracking-wide official-title">О СМЕРТИ</h2>
       </div>
-      
-      <div className="space-y-4 text-sm">
-        <div>
-          <div className="font-semibold mb-1">Фамилия, имя, отчество умершего:</div>
-          <div className="pl-4">{data.lastName} {data.firstName} {data.middleName}</div>
+
+      <div className="space-y-4 official-content">
+        <div className="flex items-baseline gap-2">
+          <span className="text-sm w-32 flex-shrink-0"></span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{data.lastName}</span>
+          </div>
         </div>
+        <div className="text-center text-xs italic -mt-2">фамилия</div>
         
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <div className="font-semibold mb-1">Дата рождения:</div>
-            <div className="pl-4">{data.birthDate}</div>
+        <div className="flex items-baseline gap-2">
+          <span className="text-sm w-32 flex-shrink-0"></span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{data.firstName} {data.middleName}</span>
           </div>
-          <div>
-            <div className="font-semibold mb-1">Дата смерти:</div>
-            <div className="pl-4">{data.deathDate}</div>
+        </div>
+        <div className="text-center text-xs italic -mt-2">имя, отчество</div>
+
+        <div className="flex items-baseline gap-2 mt-6">
+          <span className="text-sm w-24 flex-shrink-0">умер(ла)</span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{formatDate(data.deathDate)}</span>
           </div>
         </div>
 
-        <div>
-          <div className="font-semibold mb-1">Место смерти:</div>
-          <div className="pl-4">{data.deathPlace}</div>
+        <div className="flex items-baseline gap-2">
+          <span className="text-sm w-24 flex-shrink-0">место смерти</span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{data.deathPlace}</span>
+          </div>
         </div>
 
-        {data.deathCause && (
-          <div>
-            <div className="font-semibold mb-1">Причина смерти:</div>
-            <div className="pl-4 text-xs">{data.deathCause}</div>
+        <div className="mt-8">
+          <div className="flex items-baseline gap-4">
+            <span className="text-sm">Место государственной регистрации</span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="text-sm italic">{data.registrationPlace}</span>
+            </div>
           </div>
-        )}
+        </div>
 
-        <div className="border-t pt-4 mt-6">
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div>
-              <div className="font-semibold">Дата составления:</div>
-              <div>{data.registrationDate}</div>
-            </div>
-            <div>
-              <div className="font-semibold">Место государственной регистрации:</div>
-              <div>{data.registrationPlace}</div>
+        <div className="mt-12 flex justify-between items-end">
+          <div className="text-center">
+            <div className="w-32 h-32 border-4 border-blue-600 rounded-full flex items-center justify-center mb-2">
+              <span className="text-xs">М.П.</span>
             </div>
           </div>
+          <div className="flex-1 ml-8">
+            <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-sm">Дата выдачи «</span>
+              <div className="border-b border-dotted border-gray-600 pb-1 px-4">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).getDate()}</span>
+              </div>
+              <span className="text-sm">»</span>
+              <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).toLocaleDateString('ru-RU', { month: 'long' })}</span>
+              </div>
+              <div className="border-b border-dotted border-gray-600 pb-1 px-8">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).getFullYear()}</span>
+              </div>
+              <span className="text-sm">г.</span>
+            </div>
+            <div className="border-b border-dotted border-gray-600 pb-1 w-full mb-1"></div>
+            <div className="text-right text-xs italic">подпись</div>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center">
+          <div className="text-red-700 font-bold tracking-widest">{number}</div>
         </div>
       </div>
     </div>
   );
 
   const renderMarriageCertificate = () => (
-    <div className="space-y-6">
-      <div className="text-center border-b-2 border-primary pb-4">
-        <div className="text-xs text-muted-foreground">РОССИЙСКАЯ ФЕДЕРАЦИЯ</div>
-        <h2 className="text-2xl font-bold mt-2">СВИДЕТЕЛЬСТВО О ЗАКЛЮЧЕНИИ БРАКА</h2>
-        <div className="text-sm text-muted-foreground mt-1">Номер записи акта: {number}</div>
+    <div className="official-document">
+      <div className="text-center mb-8">
+        <div className="text-xs tracking-widest mb-2 official-label">РОССИЙСКАЯ ФЕДЕРАЦИЯ</div>
+        <h1 className="text-4xl font-serif tracking-wide mb-1 official-title">СВИДЕТЕЛЬСТВО</h1>
+        <h2 className="text-3xl font-serif tracking-wide official-title">О ЗАКЛЮЧЕНИИ БРАКА</h2>
       </div>
-      
-      <div className="space-y-4 text-sm">
-        <div>
-          <div className="font-semibold mb-1">Муж:</div>
-          <div className="pl-4">{data.groomLastNameBefore} {data.groomFirstName} {data.groomMiddleName}</div>
-          {data.groomLastNameAfter && data.groomLastNameAfter !== data.groomLastNameBefore && (
-            <div className="pl-4 text-xs text-muted-foreground">Фамилия после брака: {data.groomLastNameAfter}</div>
-          )}
-        </div>
 
-        <div>
-          <div className="font-semibold mb-1">Жена:</div>
-          <div className="pl-4">{data.brideLastNameBefore} {data.brideFirstName} {data.brideMiddleName}</div>
-          {data.brideLastNameAfter && data.brideLastNameAfter !== data.brideLastNameBefore && (
-            <div className="pl-4 text-xs text-muted-foreground">Фамилия после брака: {data.brideLastNameAfter}</div>
-          )}
-        </div>
-
-        <div>
-          <div className="font-semibold mb-1">Дата заключения брака:</div>
-          <div className="pl-4">{data.marriageDate}</div>
-        </div>
-
-        <div>
-          <div className="font-semibold mb-1">Место заключения брака:</div>
-          <div className="pl-4">{data.marriagePlace}</div>
-        </div>
-
-        <div className="border-t pt-4 mt-6">
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div>
-              <div className="font-semibold">Дата составления:</div>
-              <div>{data.registrationDate}</div>
-            </div>
-            <div>
-              <div className="font-semibold">Место государственной регистрации:</div>
-              <div>{data.registrationPlace}</div>
+      <div className="space-y-4 official-content">
+        <div className="mb-6">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm w-20 flex-shrink-0">Муж</span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="official-data">{data.groomLastNameBefore}</span>
             </div>
           </div>
+          <div className="text-center text-xs italic -mt-2 mb-3">фамилия</div>
+
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm w-20 flex-shrink-0"></span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="official-data">{data.groomFirstName} {data.groomMiddleName}</span>
+            </div>
+          </div>
+          <div className="text-center text-xs italic -mt-2">имя, отчество</div>
+        </div>
+
+        <div className="mb-6">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm w-20 flex-shrink-0">Жена</span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="official-data">{data.brideLastNameBefore}</span>
+            </div>
+          </div>
+          <div className="text-center text-xs italic -mt-2 mb-3">фамилия</div>
+
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm w-20 flex-shrink-0"></span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="official-data">{data.brideFirstName} {data.brideMiddleName}</span>
+            </div>
+          </div>
+          <div className="text-center text-xs italic -mt-2">имя, отчество</div>
+        </div>
+
+        <div className="flex items-baseline gap-2 mt-6">
+          <span className="text-sm flex-shrink-0">Дата заключения брака</span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{formatDate(data.marriageDate)}</span>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <div className="flex items-baseline gap-4">
+            <span className="text-sm">Место государственной регистрации</span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="text-sm italic">{data.registrationPlace}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 flex justify-between items-end">
+          <div className="text-center">
+            <div className="w-32 h-32 border-4 border-blue-600 rounded-full flex items-center justify-center mb-2">
+              <span className="text-xs">М.П.</span>
+            </div>
+          </div>
+          <div className="flex-1 ml-8">
+            <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-sm">Дата выдачи «</span>
+              <div className="border-b border-dotted border-gray-600 pb-1 px-4">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).getDate()}</span>
+              </div>
+              <span className="text-sm">»</span>
+              <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).toLocaleDateString('ru-RU', { month: 'long' })}</span>
+              </div>
+              <div className="border-b border-dotted border-gray-600 pb-1 px-8">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).getFullYear()}</span>
+              </div>
+              <span className="text-sm">г.</span>
+            </div>
+            <div className="border-b border-dotted border-gray-600 pb-1 w-full mb-1"></div>
+            <div className="text-right text-xs italic">подпись</div>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center">
+          <div className="text-red-700 font-bold tracking-widest">{number}</div>
         </div>
       </div>
     </div>
   );
 
   const renderNameChangeCertificate = () => (
-    <div className="space-y-6">
-      <div className="text-center border-b-2 border-primary pb-4">
-        <div className="text-xs text-muted-foreground">РОССИЙСКАЯ ФЕДЕРАЦИЯ</div>
-        <h2 className="text-2xl font-bold mt-2">СВИДЕТЕЛЬСТВО О ПЕРЕМЕНЕ ИМЕНИ</h2>
-        <div className="text-sm text-muted-foreground mt-1">Номер записи акта: {number}</div>
+    <div className="official-document">
+      <div className="text-center mb-8">
+        <div className="text-xs tracking-widest mb-2 official-label">РОССИЙСКАЯ ФЕДЕРАЦИЯ</div>
+        <h1 className="text-4xl font-serif tracking-wide mb-1 official-title">СВИДЕТЕЛЬСТВО</h1>
+        <h2 className="text-3xl font-serif tracking-wide official-title">О ПЕРЕМЕНЕ ИМЕНИ</h2>
       </div>
-      
-      <div className="space-y-4 text-sm">
-        <div>
-          <div className="font-semibold mb-1">Прежние фамилия, имя, отчество:</div>
-          <div className="pl-4">{data.lastNameBefore} {data.firstNameBefore} {data.middleNameBefore}</div>
-        </div>
 
-        <div>
-          <div className="font-semibold mb-1">Новые фамилия, имя, отчество:</div>
-          <div className="pl-4 text-lg font-medium">{data.lastNameAfter} {data.firstNameAfter} {data.middleNameAfter}</div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <div className="font-semibold mb-1">Дата рождения:</div>
-            <div className="pl-4">{data.birthDate}</div>
-          </div>
-          <div>
-            <div className="font-semibold mb-1">Место рождения:</div>
-            <div className="pl-4">{data.birthPlace}</div>
+      <div className="space-y-4 official-content">
+        <div className="mb-4">
+          <div className="text-sm mb-2">Прежние фамилия, имя, отчество:</div>
+          <div className="border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{data.lastNameBefore} {data.firstNameBefore} {data.middleNameBefore}</span>
           </div>
         </div>
 
-        {data.reason && (
-          <div>
-            <div className="font-semibold mb-1">Основание для перемены имени:</div>
-            <div className="pl-4 text-xs">{data.reason}</div>
+        <div className="mb-6">
+          <div className="text-sm mb-2">Новые фамилия, имя, отчество:</div>
+          <div className="border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data text-lg">{data.lastNameAfter} {data.firstNameAfter} {data.middleNameAfter}</span>
           </div>
-        )}
+        </div>
 
-        <div className="border-t pt-4 mt-6">
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div>
-              <div className="font-semibold">Дата составления:</div>
-              <div>{data.registrationDate}</div>
-            </div>
-            <div>
-              <div className="font-semibold">Место государственной регистрации:</div>
-              <div>{data.registrationPlace}</div>
+        <div className="flex items-baseline gap-2 mt-6">
+          <span className="text-sm w-32 flex-shrink-0">Дата рождения</span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{formatDate(data.birthDate)}</span>
+          </div>
+        </div>
+
+        <div className="flex items-baseline gap-2">
+          <span className="text-sm w-32 flex-shrink-0">Место рождения</span>
+          <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+            <span className="official-data">{data.birthPlace}</span>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <div className="flex items-baseline gap-4">
+            <span className="text-sm">Место государственной регистрации</span>
+            <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+              <span className="text-sm italic">{data.registrationPlace}</span>
             </div>
           </div>
+        </div>
+
+        <div className="mt-12 flex justify-between items-end">
+          <div className="text-center">
+            <div className="w-32 h-32 border-4 border-blue-600 rounded-full flex items-center justify-center mb-2">
+              <span className="text-xs">М.П.</span>
+            </div>
+          </div>
+          <div className="flex-1 ml-8">
+            <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-sm">Дата выдачи «</span>
+              <div className="border-b border-dotted border-gray-600 pb-1 px-4">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).getDate()}</span>
+              </div>
+              <span className="text-sm">»</span>
+              <div className="flex-1 border-b border-dotted border-gray-600 pb-1 text-center">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).toLocaleDateString('ru-RU', { month: 'long' })}</span>
+              </div>
+              <div className="border-b border-dotted border-gray-600 pb-1 px-8">
+                <span className="official-data">{new Date(data.registrationDate || Date.now()).getFullYear()}</span>
+              </div>
+              <span className="text-sm">г.</span>
+            </div>
+            <div className="border-b border-dotted border-gray-600 pb-1 w-full mb-1"></div>
+            <div className="text-right text-xs italic">подпись</div>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center">
+          <div className="text-red-700 font-bold tracking-widest">{number}</div>
         </div>
       </div>
     </div>
@@ -223,33 +390,36 @@ export const DocumentPreview = ({ type, number, data, onPrint, onClose }: Docume
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-8 bg-white">
-          <div className="mb-6 flex items-center justify-between border-b pb-4">
-            <h3 className="text-lg font-semibold">Предпросмотр документа</h3>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <Icon name="X" size={20} />
-            </Button>
-          </div>
+      <div className="max-w-4xl w-full max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-2xl">
+        <div className="p-6 print:hidden border-b flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Предпросмотр документа</h3>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            <Icon name="X" size={20} />
+          </Button>
+        </div>
 
-          <div className="border-4 border-primary/20 p-8 bg-amber-50/30">
-            {type === 'birth' && renderBirthCertificate()}
-            {type === 'death' && renderDeathCertificate()}
-            {type === 'marriage' && renderMarriageCertificate()}
-            {type === 'name_change' && renderNameChangeCertificate()}
-          </div>
-
-          <div className="mt-6 flex gap-3 justify-center print:hidden">
-            <Button onClick={onPrint} className="gap-2">
-              <Icon name="Printer" size={16} />
-              Печать на бланк
-            </Button>
-            <Button variant="outline" onClick={onClose}>
-              Закрыть
-            </Button>
+        <div className="p-8">
+          <div className="certificate-border bg-gradient-to-br from-amber-50 via-yellow-50 to-amber-100 p-12 relative">
+            <div className="absolute inset-0 certificate-pattern opacity-10"></div>
+            <div className="relative z-10">
+              {type === 'birth' && renderBirthCertificate()}
+              {type === 'death' && renderDeathCertificate()}
+              {type === 'marriage' && renderMarriageCertificate()}
+              {type === 'name_change' && renderNameChangeCertificate()}
+            </div>
           </div>
         </div>
-      </Card>
+
+        <div className="p-6 print:hidden border-t flex gap-3 justify-center bg-gray-50">
+          <Button onClick={onPrint} className="gap-2">
+            <Icon name="Printer" size={16} />
+            Печать на бланк
+          </Button>
+          <Button variant="outline" onClick={onClose}>
+            Закрыть
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
